@@ -197,6 +197,7 @@ CreateThread(function()
 		        EnableControlAction(0, 249, true)
                 EnableControlAction(0, 46, true)
                 EnableControlAction(0, 58, true)
+                EnableControlAction(0, 47, true)
 
                 if LaststandTime > Laststand.MinimumRevive then
                     DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
@@ -209,6 +210,8 @@ CreateThread(function()
                     end
 
                     if IsControlJustPressed(0, 47) and not emsNotified then
+                        -- print("ALERTING")
+                        TriggerEvent('qb-ambulancejob:client:checkOfflineMedic')
                         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
                         emsNotified = true
                     end

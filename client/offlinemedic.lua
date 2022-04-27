@@ -280,6 +280,7 @@ end
 
 RegisterNetEvent('qb-ambulancejob:client:checkOfflineMedic')
 AddEventHandler('qb-ambulancejob:client:checkOfflineMedic', function()
+    print("CHECKING")
     local doctors = 0
     QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(cb)
         doctors = cb

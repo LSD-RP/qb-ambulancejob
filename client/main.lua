@@ -71,6 +71,21 @@ local function GetAvailableBed(bedId)
     return retval
 end
 
+local function DrawText3D(x, y, z, text)
+    SetTextScale(0.35, 0.35)
+    SetTextFont(4)
+    SetTextProportional(1)
+    SetTextColour(255, 255, 255, 215)
+    SetTextEntry("STRING")
+    SetTextCentre(true)
+    AddTextComponentString(text)
+    SetDrawOrigin(x,y,z, 0)
+    DrawText(0.0, 0.0)
+    local factor = (string.len(text)) / 370
+    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
+    ClearDrawOrigin()
+end
+
 local function GetDamagingWeapon(ped)
     for k, v in pairs(Config.Weapons) do
         if HasPedBeenDamagedByWeapon(ped, k, 0) then
@@ -983,3 +998,33 @@ else
         end
     end)
 end
+
+CreateThread(function()
+    while true do
+        sleep = 1000
+        if LocalPlayer.state['isLoggedIn'] then
+            local pos = GetEntityCoords(PlayerPedId())
+            for k, checkins in pairs(Config.Locations["checking"]) do
+                if #(pos - checkins) < 1.5 then
+                    sleep = 5
+                    if doctorCount >= Config.MinimalDoctors then
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Call doctor")
+                    else
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Check in")
+                    end
+                   
+                elseif #(pos - checkins) < 4.5 then
+                    sleep = 5
+                    if doctorCount >= Config.MinimalDoctors then
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "Call")
+                    else
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "Check in")
+                    end
+                end
+            end
+
+          
+        end
+        Wait(sleep)
+    end
+end)

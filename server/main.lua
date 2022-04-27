@@ -87,7 +87,7 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     local coords = GetEntityCoords(ped)
     local players = QBCore.Functions.GetQBPlayers()
     for k,v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+        if v.PlayerData.job.name == 'ambulance' then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
         end
     end
@@ -227,7 +227,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	local amount = 0
     local players = QBCore.Functions.GetQBPlayers()
     for k,v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+        if v.PlayerData.job.name == 'ambulance' then
 			amount = amount + 1
 		end
 	end
