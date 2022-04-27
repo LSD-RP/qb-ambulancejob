@@ -1,6 +1,6 @@
 local statusCheckPed = nil
 local PlayerJob = {}
-local onDuty = false
+local onDuty = true
 local currentGarage = 1
 
 -- Functions
@@ -53,6 +53,15 @@ function TakeOutVehicle(vehicleInfo)
         SetVehicleNumberPlateText(veh, "AMBU"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
+        local props = {}
+        props.modTransmission = 2
+        props.modSuspension = 3
+        props.modArmor = 4
+        props.modTurbo = 0
+        props.modBrakes = 2
+        props.modEngine = 3
+        props.modXenon = 0
+        QBCore.Functions.SetVehicleProperties(veh,props)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
@@ -107,10 +116,11 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    exports.spawnmanager:setAutoSpawn(false)
+    -- exports.spawnmanager:setAutoSpawn(false)
     local ped = PlayerPedId()
     local player = PlayerId()
     TriggerServerEvent("hospital:server:SetDoctor")
+
     CreateThread(function()
         Wait(5000)
         SetEntityMaxHealth(ped, 200)
@@ -118,28 +128,26 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         SetPlayerHealthRechargeMultiplier(player, 0.0)
         SetPlayerHealthRechargeLimit(player, 0.0)
     end)
-    CreateThread(function()
-        Wait(1000)
-        QBCore.Functions.GetPlayerData(function(PlayerData)
-            PlayerJob = PlayerData.job
-            onDuty = PlayerData.job.onduty
-            SetPedArmour(ped, PlayerData.metadata["armor"])
-            if (not PlayerData.metadata["inlaststand"] and PlayerData.metadata["isdead"]) then
-                deathTime = Laststand.ReviveInterval
-                OnDeath()
-                DeathTimer()
-            elseif (PlayerData.metadata["inlaststand"] and not PlayerData.metadata["isdead"]) then
-                SetLaststand(true, true)
-            else
-                TriggerServerEvent("hospital:server:SetDeathStatus", false)
-                TriggerServerEvent("hospital:server:SetLaststandStatus", false)
-            end
-        end)
-    end)
+
+    local PlayerData = QBCore.Functions.GetPlayerData()
+    Wait(1000)
+    PlayerJob = PlayerData.job
+    onDuty = true
+    SetPedArmour(ped, PlayerData.metadata["armor"])
+    if (not PlayerData.metadata["inlaststand"] and PlayerData.metadata["isdead"]) then
+        deathTime = Laststand.ReviveInterval
+        OnDeath()
+        DeathTimer()
+    elseif (PlayerData.metadata["inlaststand"] and not PlayerData.metadata["isdead"]) then
+        SetLaststand(true, true)
+    else
+        TriggerServerEvent("hospital:server:SetDeathStatus", false)
+        TriggerServerEvent("hospital:server:SetLaststandStatus", false)
+    end
 end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    onDuty = duty
+    onDuty = true
     TriggerServerEvent("hospital:server:SetDoctor")
 end)
 
@@ -181,6 +189,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
 end)
 
 RegisterNetEvent('hospital:client:RevivePlayer', function()
+    local doc = QBCore.Functions.GetPlayerData()
     QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
         if hasItem then
             local player, distance = GetClosestPlayer()
@@ -198,8 +207,11 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                     flags = 16,
                 }, {}, {}, function() -- Done
                     isHealingPerson = false
+                    TriggerServerEvent("qb-log:server:CreateLog", "911", "EMS Reive", "green", "**"..doc.charinfo['firstname'] .. ' ' .. doc.charinfo['lastname'] .. ' revived ' .. playerId .. ' and got $750')
+
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     QBCore.Functions.Notify("You revived the person!")
+                    TriggerServerEvent("hospital:server:RewardRevive")
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 end, function() -- Cancel
                     isHealingPerson = false
@@ -257,11 +269,11 @@ CreateThread(function()
     Wait(1000)
     while true do
         local sleep = 2000
-        if LocalPlayer.state.isLoggedIn and PlayerJob.name == "ambulance" then
+        if PlayerJob.name == "ambulance" then
             local pos = GetEntityCoords(PlayerPedId())
             for k, v in pairs(Config.Locations["stash"]) do
                 if #(pos - v) < 4.5 then
-                    if onDuty then
+                    if true then
                         sleep = 5
                         if #(pos - v) < 1.5 then
                             DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Personal stash")
@@ -302,35 +314,39 @@ end)
 CreateThread(function()
     while true do
         sleep = 1000
-        if LocalPlayer.state.isLoggedIn then
+        if true then
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)
-            if PlayerJob.name =="ambulance" then
-                for k, v in pairs(Config.Locations["duty"]) do
-                    local dist = #(pos - v)
-                    if dist < 5 then
-                        sleep = 0
-                        if dist < 1.5 then
-                            if onDuty then
-                                DrawText3D(v.x, v.y, v.z, "~r~E~w~ - Go Off Duty")
-                            else
-                                DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Go On Duty")
-                            end
-                            if IsControlJustReleased(0, 38) then
-                                onDuty = not onDuty
-                                TriggerServerEvent("QBCore:ToggleDuty")
+            for k, v in pairs(Config.Locations["duty"]) do
+                local dist = #(pos - v)
+                if dist < 5 then
+                    sleep = 0
+                    if dist < 1.5 then
+                        if true then
+                            DrawText3D(v.x, v.y, v.z, "~r~E~w~ - Go On/Off Duty")
+                        else
+                            DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Go On Duty")
+                        end
+                        if IsControlJustReleased(0, 38) then
+                            -- onDuty = not onDuty
+                            TriggerServerEvent("QBCore:ToggleDuty")
+                            if PlayerJob.name == "ambulance" then
                                 TriggerServerEvent("police:server:UpdateBlips")
                             end
-                        elseif dist < 4.5 then
-                            DrawText3D(v.x, v.y, v.z, "On/Off Duty")
                         end
+                    elseif dist < 4.5 then
+                        DrawText3D(v.x, v.y, v.z, "On/Off Duty")
                     end
                 end
+            end
+            if PlayerJob.name =="ambulance" then
+            -- if true then
+                
 
                 for k, v in pairs(Config.Locations["armory"]) do
                     local dist = #(pos - v)
                     if dist < 4.5 then
-                        if onDuty then
+                        if true then
                             if dist < 1.5 then
                                 sleep = 0
                                 DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Armory")
@@ -370,7 +386,7 @@ CreateThread(function()
                 for k, v in pairs(Config.Locations["helicopter"]) do
                     local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 7.5 then
-                        if onDuty then
+                        if true then
                             sleep = 5
                             DrawMarker(2, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                             if dist < 1.5 then

@@ -5,74 +5,178 @@ Config.WipeInventoryOnRespawn = true
 
 Config.Locations = {
     ["checking"] = {
-	    [1] = vector3(308.19, -595.35, 43.29),
+	    -- [1] = vector3(308.19, -595.35, 43.29), -- pillbox
+        [1] = vector3(312.13, -592.88, 43.28), -- pillbox
 	    [2] = vector3(-254.54, 6331.78, 32.43), -- paleto
+        [3] = vector3(-435.93, -326.3, 34.91), -- zonah
+        [4] = vector3(1836.54, 3680.56, 34.27), -- sandy
+        [5] = vector3(440.83, -976.66, 26.67),
     },
     ["duty"] = {
-        [1] = vector3(311.18, -599.25, 43.29),
+        -- [1] = vector3(305.0625, -598.5103, 43.2918),
+        [1] = vector3(309.54, -602.52, 43.28),
         [2] = vector3(-254.88, 6324.5, 32.58),
+        [3] = vector3(-432.35, -319.3, 34.91),
+        [4] = vector3(1840.13, 3685.08, 34.27),
     },
     ["vehicle"] = {
-        [1] = vector4(294.578, -574.761, 43.179, 35.792),
+        -- [1] = vector4(294.578, -574.761, 43.179, 35.792),
+        [1] = vector4(287.48, -600.08, 43.18, 117.65),
         [2] = vector4(-234.28, 6329.16, 32.15, 222.5),
+        [3] = vector4(-454.33, -340.95, 34.36, 0.67),
+        [4] = vector4(1832.78, 3696.94, 34.22, 298.44),
     },
     ["helicopter"] = {
         [1] = vector4(351.58, -587.45, 74.16, 160.5),
         [2] = vector4(-475.43, 5988.353, 31.716, 31.34),
+        [3] = vector4(-456.07, -291.67, 78.17, 24.87),
     },
     ["armory"] = {
-        [1] = vector3(309.93, -602.94, 43.29),
+        -- [1] = vector3(309.93, -602.94, 43.29),
+        [1] = vector3(306.8, -601.83, 43.28),
         [2] = vector3(-245.13, 6315.71, 32.82),
+        [3] = vector3(-488.57, -341.19, 42.32),
+        [4] = vector3(1839.09, 3689.43, 34.27),
     },
     ["roof"] = {
-        [1] = vector4(338.5, -583.85, 74.16, 245.5),
+        -- [1] = vector4(-439.66, -335.99, 78.3, 83.53),
     },
     ["main"] = {
-        [1] = vector3(298.44, -599.7, 43.29),
+        -- [1] = vector3(-490.53, -327.59, 42.31),
     },
     ["stash"] = {
-        [1] = vector3(309.78, -596.6, 43.29),
+        [1] = vector3(-443.97, -310.15, 34.91),
+        [2] = vector3(301.27, -599.85, 43.28), -- pillbox
     },
     ["beds"] = {
-        [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
-        [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
-        [3] = {coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672},
-        [4] = {coords = vector4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672},
-        [5] = {coords = vector4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672},
-        [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
-        [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327},
-        [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
+        [1] = { coords = vector4(314.5, -584.3, 43.2, 345.08), taken = false, model = 1631638868},
+        [2] = { coords = vector4(317.7, -585.29, 43.2, 332.04), taken = false, model = 1631638868},
+        [3] = { coords = vector4(322.63, -587.06, 43.2, 327.99), taken = false, model = 1631638868},
+        [4] = { coords = vector4(311.13, -582.98, 43.2, 344.8), taken = false, model = 1631638868},
+        [5] = { coords = vector4(307.85, -581.7, 43.2, 338.87), taken = false, model = 1631638868},
+        [6] = { coords = vector4(313.81, -578.92, 43.2, 166.73), taken = false, model = 1631638868},
+        [7] = { coords = vector4(309.41, -577.35, 43.2, 156.68), taken = false, model = 1631638868},
+        [8] = { coords = vector4(319.4, -581.05, 43.2, 158.25), taken = false, model = 1631638868},
+        [0] = { coords = vector4(324.24, -582.67, 43.2, 158.95), taken = false, model = 1631638868},
+        -- [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
+        -- [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
+        -- [3] = {coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672},
+        -- [4] = {coords = vector4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672},
+        -- [5] = {coords = vector4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672},
+        -- [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
+        -- [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327},
+        -- [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
 	--- paleto
 	    [9] = {coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672},
         [10] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
         [11] = {coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672},
+        -- zonah
+        [12] = {coords = vector4(-459.03, -279.67, 35.84, 201.88), taken = false, model = 2117668672},
+        [13] = {coords = vector4(-462.81, -281.14, 35.84, 199.76), taken = false, model = 2117668672},
+        [14] = {coords = vector4(-466.63, -282.71, 35.84, 224.95), taken = false, model = 2117668672},
+        [15] = {coords = vector4(-459.03, -279.67, 35.84, 201.88), taken = false, model = 2117668672},
+        [16] = {coords = vector4(-459.03, -279.67, 35.84, 201.88), taken = false, model = 2117668672},
+        -- sandy
+        [17] = {coords = vector4(1829.78, 3676.05, 35.18, 23.04), taken = false, model = 2117668672},
+        [18] = {coords = vector4(1825.76, 3678.47, 35.18, 301.02), taken = false, model = 2117668672},
+        -- inside pd
+        [19] = {coords = vector4(438.34, -976.44, 27.58, 182.02), taken = false, model = 2117668672},
     },
     ["stations"] = {
-        [1] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)}
+        [1] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)},
+        [2] = {label = "Mount Zonah Hospital", coords = vector3(-432.3, -319.15, 34.91)},
+        [3] = {label = "Sandy Shores Medical", coords = vector3(1836.54, 3680.56, 34.27)},
+        [4] = {label = "Paleto Medical Center", coords = vector3(-248.03, 6330.7, 32.42)},
     }
 }
+
+
 
 Config.AuthorizedVehicles = {
 	-- Grade 0
 	[0] = {
-		["ambulance"] = "Ambulance",
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
 	},
 	-- Grade 1
 	[1] = {
-		["ambulance"] = "Ambulance",
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
 
 	},
 	-- Grade 2
 	[2] = {
-		["ambulance"] = "Ambulance",
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
 	},
 	-- Grade 3
 	[3] = {
-		["ambulance"] = "Ambulance",
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
 	},
 	-- Grade 4
 	[4] = {
-		["ambulance"] = "Ambulance",
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
+	},
+    -- Grade 5
+	[5] = {
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
+	},
+    -- Grade 6
+	[6] = {
+        ["ambulance"] = "Ambulance",
+        ['ambulance22'] = 'EMS Ambulance',
+        ['lsambulance'] = 'EMS Van',
+        ['qrv'] = 'Ford Explorer',
+        ['flyhoe'] = 'Chevy Tahoe',
+        ['emsf250'] = 'EMS F250',
+        ['fsilv'] = 'Silverado',
+        ['ems'] = 'EMS Sedan',
+        ['fd2'] = 'Dodge Charger',
 	}
 }
 
@@ -130,11 +234,35 @@ Config.Items = {
             type = "item",
             slot = 6,
         },
+        [7] = {
+            name = "walkstick",
+            price = 0,
+            amount = 50,
+            info = {},
+            type = "item",
+            slot = 7,
+        },
+        [8] = {
+            name = "weapon_stungun",
+            price = 0,
+            amount = 50,
+            info = {},
+            type = "item",
+            slot = 8,
+        },
+        [9] = {
+            name = "ifaks",
+            price = 0,
+            amount = 50,
+            info = {},
+            type = "item",
+            slot = 9,
+        },
     }
 }
 
-Config.BillCost = 2000
-Config.DeathTime = 300
+Config.BillCost = 750
+Config.DeathTime = 180
 Config.CheckTime = 10
 
 Config.PainkillerInterval = 60 -- seconds
@@ -188,7 +316,7 @@ Config.BleedMovementAdvance = 3
 --[[
     The Base Damage That Is Multiplied By Bleed Level Every Time A Bleed Tick Occurs
 ]]
-Config.BleedTickDamage = 8
+Config.BleedTickDamage = 2
 
 --[[
     FadeOutTimer : How many bleed ticks occur before fadeout happens

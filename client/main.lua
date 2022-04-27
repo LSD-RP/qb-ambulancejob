@@ -113,14 +113,14 @@ local function GetAvailableBed(bedId)
     if bedId == nil then
         for k, v in pairs(Config.Locations["beds"]) do
             if not Config.Locations["beds"][k].taken then
-		if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
+		if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 100 then
                 	retval = k
 		end
             end
         end
     else
         if not Config.Locations["beds"][bedId].taken then
-		if #(pos - vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y, Config.Locations["beds"][bedId].coords.z))  < 500 then
+		if #(pos - vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y, Config.Locations["beds"][bedId].coords.z))  < 100 then
             		retval = bedId
 		    end
         end
@@ -594,11 +594,13 @@ local function ProcessDamage(ped)
 end
 
 -- Events
+local recentWaypoint = nil
 
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
+    recentWaypoint = coords
     QBCore.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'ambulance')
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
@@ -632,6 +634,15 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
         end
     end
 end)
+
+RegisterCommand('alert_gpsems', function()
+    
+    local job = QBCore.Functions.GetPlayerData().job.name
+    if job ~= "ambulance" then return end
+	if recentWaypoint then SetWaypointOff() SetNewWaypoint(recentWaypoint.x, recentWaypoint.y) end
+end, false)
+
+RegisterKeyMapping('alert_gpsems', 'Set waypoint', 'keyboard', 'Y')
 
 RegisterNetEvent('hospital:client:Revive', function()
     local player = PlayerPedId()
@@ -754,6 +765,7 @@ end)
 
 RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
     doctorCount = amount
+    TriggerServerEvent("hospital:server:SetDoctorCount", amount)
 end)
 
 RegisterNetEvent('hospital:client:adminHeal', function()
@@ -909,7 +921,7 @@ CreateThread(function()
                     end
                     if IsControlJustReleased(0, 38) then
                         if doctorCount >= Config.MinimalDoctors then
-                            TriggerServerEvent("hospital:server:SendDoctorAlert")
+                            TriggerServerEvent("hospital:server:SendDoctorAlert", k)
                         else
                             TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
                             QBCore.Functions.Progressbar("hospital_checkin", "Checking in..", 2000, false, true, {

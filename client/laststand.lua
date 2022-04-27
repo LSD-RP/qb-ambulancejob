@@ -1,6 +1,6 @@
 Laststand = Laststand or {}
-Laststand.ReviveInterval = 360
-Laststand.MinimumRevive = 300
+Laststand.ReviveInterval = 180
+Laststand.MinimumRevive = 180
 InLaststand = false
 LaststandTime = 0
 lastStandDict = "combat@damage@writhe"

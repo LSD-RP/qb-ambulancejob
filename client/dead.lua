@@ -2,6 +2,7 @@ local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 local hold = 5
 deathTime = 0
+helpCalled = false
 
 -- Functions
 
@@ -104,6 +105,7 @@ CreateThread(function()
             local playerPed = PlayerPedId()
             if IsEntityDead(playerPed) and not InLaststand then
                 SetLaststand(true)
+                -- TriggerEvent('qb-ambulancejob:client:checkOfflineMedic')
             elseif IsEntityDead(playerPed) and InLaststand and not isDead then
                 SetLaststand(false)
                 local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
@@ -130,6 +132,7 @@ CreateThread(function()
 		end
 	end
 end)
+
 
 CreateThread(function()
 	while true do
@@ -191,11 +194,24 @@ CreateThread(function()
                 EnableControlAction(0, 213, true)
 		        EnableControlAction(0, 249, true)
                 EnableControlAction(0, 46, true)
+                EnableControlAction(0, 58, true)
 
                 if LaststandTime > Laststand.MinimumRevive then
                     DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
                 else
-                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS, YOU CAN BE HELPED", 255, 255, 255, 255)
+                    if not helpCalled and not isInHospitalBed then
+                        DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS, PRESS ~r~ [G] ~w~ TO CALL FOR HELP", 255, 255, 255, 255)
+                        if IsControlJustReleased(0,58) then
+                            TriggerEvent('qb-ambulancejob:client:checkOfflineMedic')
+                            helpCalled = true
+                            Citizen.CreateThread(function()
+                                Wait(30000)
+                                helpCalled = false
+                            end)
+                        end
+                    else
+                        DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
+                    end
                 end
 
                 if not isEscorted then

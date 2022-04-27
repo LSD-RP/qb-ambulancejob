@@ -12,6 +12,7 @@ client_scripts {
 	'client/laststand.lua',
 	'client/job.lua',
 	'client/dead.lua',
+	'client/offlinemedic.lua',
 }
 
 server_script 'server/main.lua'
