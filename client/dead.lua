@@ -52,7 +52,7 @@ function OnDeath()
                 loadAnimDict(deadAnimDict)
                 TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
             end
-            TriggerServerEvent('hospital:server:ambulanceAlert', 'Civilian Died')
+            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
         end
     end
 end
@@ -116,15 +116,15 @@ CreateThread(function()
                 end
 
                 local killerId = NetworkGetPlayerIndexFromPed(killer)
-                local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                local weaponLabel = "Unknown"
-                local weaponName = "Unknown_Weapon"
+                local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
+                local weaponLabel = Lang:t('info.wep_unknown')
+                local weaponName = Lang:t('info.wep_unknown')
                 local weaponItem = QBCore.Shared.Weapons[killerWeapon]
                 if weaponItem then
                     weaponLabel = weaponItem.label
                     weaponName = weaponItem.name
                 end
-                TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(-1) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
+                TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
@@ -133,6 +133,7 @@ CreateThread(function()
 	end
 end)
 
+emsNotified = false
 
 CreateThread(function()
 	while true do
@@ -149,15 +150,16 @@ CreateThread(function()
             EnableControlAction(0, 322, true)
             EnableControlAction(0, 288, true)
             EnableControlAction(0, 213, true)
-	        EnableControlAction(0, 249, true)
+            EnableControlAction(0, 249, true)
             EnableControlAction(0, 46, true)
+            EnableControlAction(0, 47, true)
 
             if isDead then
                 if not isInHospitalBed then
                     if deathTime > 0 then
-                        DrawTxt(0.93, 1.44, 1.0,1.0,0.6, "RESPAWN IN: ~r~" .. math.ceil(deathTime) .. "~w~ SECONDS", 255, 255, 255, 255)
+                        DrawTxt(0.93, 1.44, 1.0,1.0,0.6, Lang:t('info.respawn_txt', {deathtime = math.ceil(deathTime)}), 255, 255, 255, 255)
                     else
-                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, "~w~ HOLD ~r~[E] ("..hold..")~w~ TO RESPAWN ~r~($"..Config.BillCost..")~w~", 255, 255, 255, 255)
+                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', {holdtime = hold, cost = Config.BillCost}), 255, 255, 255, 255)
                     end
                 end
 
@@ -197,20 +199,18 @@ CreateThread(function()
                 EnableControlAction(0, 58, true)
 
                 if LaststandTime > Laststand.MinimumRevive then
-                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
+                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
                 else
-                    if not helpCalled and not isInHospitalBed then
-                        DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS, PRESS ~r~ [G] ~w~ TO CALL FOR HELP", 255, 255, 255, 255)
-                        if IsControlJustReleased(0,58) then
-                            TriggerEvent('qb-ambulancejob:client:checkOfflineMedic')
-                            helpCalled = true
-                            Citizen.CreateThread(function()
-                                Wait(30000)
-                                helpCalled = false
-                            end)
-                        end
+                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
+                    if not emsNotified then
+                        DrawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
                     else
-                        DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU WILL BLEED OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
+                        DrawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
+                    end
+
+                    if IsControlJustPressed(0, 47) and not emsNotified then
+                        TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+                        emsNotified = true
                     end
                 end
 

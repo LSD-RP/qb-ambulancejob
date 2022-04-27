@@ -1,5 +1,7 @@
 Config = {}
 
+Config.UseTarget = true
+
 Config.MinimalDoctors = 2
 Config.WipeInventoryOnRespawn = true
 
@@ -183,7 +185,7 @@ Config.AuthorizedVehicles = {
 Config.Helicopter = "polmav"
 
 Config.Items = {
-    label = "Hospital safe",
+    label = Lang:t('info.safe'),
     slots = 30,
     items = {
         [1] = {
@@ -435,17 +437,17 @@ Config.StaggerAreas = {
 }
 
 Config.WoundStates = {
-    'irritated',
-    'quite painful',
-    'painful',
-    'really painful',
+    Lang:t('states.irritated'),
+    Lang:t('states.quite_painful'),
+    Lang:t('states.painful'),
+    Lang:t('states.really_painful'),
 }
 
 Config.BleedingStates = {
-    [1] = {label = 'bleeding a little bit..', damage = 10, chance = 50},
-    [2] = {label = 'bleeding..', damage = 15, chance = 65},
-    [3] = {label = 'bleeding a lot..', damage = 20, chance = 65},
-    [4] = {label = 'bleeding very much..', damage = 25, chance = 75},
+    [1] = {label = Lang:t('states.little_bleed'), damage = 10, chance = 50},
+    [2] = {label = Lang:t('states.bleed'), damage = 15, chance = 65},
+    [3] = {label = Lang:t('states.lot_bleed'), damage = 20, chance = 65},
+    [4] = {label = Lang:t('states.big_bleed'), damage = 25, chance = 75},
 }
 
 Config.MovementRate = {
@@ -575,6 +577,7 @@ Config.BoneIndexes = {
 
 Config.Weapons = {
     [`WEAPON_STUNGUN`] = Config.WeaponClasses['NONE'],
+    [`WEAPON_STUNGUN_MP`] = Config.WeaponClasses['NONE'],
     --[[ Small Caliber ]]--
     [`WEAPON_PISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_COMBATPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
@@ -621,6 +624,7 @@ Config.Weapons = {
     [`WEAPON_MINIGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_MUSKET`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_RAILGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
+    [`WEAPON_HEAVYRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
 
     --[[ Shotguns ]]--
     [`WEAPON_ASSAULTSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
@@ -672,6 +676,7 @@ Config.Weapons = {
     [`WEAPON_RPG`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_STICKYBOMB`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_HELI_CRASH`] = Config.WeaponClasses['EXPLOSIVE'],
+    [`WEAPON_EMPLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
 
     --[[ Other ]]--
     [`WEAPON_FALL`] = Config.WeaponClasses['OTHER'], -- Fall
