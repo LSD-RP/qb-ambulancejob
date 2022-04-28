@@ -6,6 +6,7 @@ local inDuty = false
 local inStash = false
 local inArmory = false
 local inVehicle = false
+local inHelicopter = false
 local inHeli = false
 local onRoof = false
 local inMain = false
@@ -388,12 +389,41 @@ end
 
 local CheckHeli = false
 local function EMSHelicopter(k)
-    CheckHeli = true
-    CreateThread(function()
-        while CheckHeli do
+    -- CheckHeli = true
+    -- CreateThread(function()
+    --     while CheckHeli do
+    --         if IsControlJustPressed(0, 38) then
+    --             exports['qb-core']:KeyPressed(38)
+    --             CheckHeli = false
+    --             local ped = PlayerPedId()
+    --                 if IsPedInAnyVehicle(ped, false) then
+    --                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+    --                 else
+    --                     currentHelictoper = k
+    --                     local coords = Config.Locations["helicopter"][currentHelictoper]
+    --                     QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
+    --                         SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
+    --                         SetEntityHeading(veh, coords.w)
+    --                         SetVehicleLivery(veh, 1) -- Ambulance Livery
+    --                         exports['LegacyFuel']:SetFuel(veh, 100.0)
+    --                         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+    --                         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+    --                         SetVehicleEngineOn(veh, true, true)
+    --                     end, coords, true)
+    --                 end
+    --             end
+    --         Wait(1)
+    --     end
+    -- end)
+end
+
+CreateThread(function()
+    while true do
+        local sleep = 5000
+        if inHelicopter then
+            sleep = 5
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                CheckHeli = false
                 local ped = PlayerPedId()
                     if IsPedInAnyVehicle(ped, false) then
                         QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
@@ -402,19 +432,25 @@ local function EMSHelicopter(k)
                         local coords = Config.Locations["helicopter"][currentHelictoper]
                         QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                             SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-                            SetEntityHeading(veh, coords.w)
+                            -- SetEntityHeading(veh, coords.w)
                             SetVehicleLivery(veh, 1) -- Ambulance Livery
                             exports['LegacyFuel']:SetFuel(veh, 100.0)
                             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
                             TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
                             SetVehicleEngineOn(veh, true, true)
                         end, coords, true)
+                        Wait(5000)
                     end
                 end
             Wait(1)
+        else
+            sleep = 2000
         end
-    end)
-end
+
+        Wait(sleep)
+        
+    end
+end)
 
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
     local ped = PlayerPedId()
@@ -493,12 +529,12 @@ CreateThread(function()
             maxZ = v.z + 2,
         })
         boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" and onDuty then
-                inVehicle = true
+            if isPointInside and PlayerJob.name =="ambulance" then
+                inHelicopter = true
                 exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
                 EMSHelicopter(k)
             else
-                inVehicle = false
+                inHelicopter = false
                 CheckHelicopter = false
                 exports['qb-core']:HideText()
             end
@@ -853,7 +889,7 @@ CreateThread(function()
                         if true then
                             sleep = 5
                             DrawMarker(2, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
-                            if dist < 1.5 then
+                            if dist < 2.5 then
                                 if IsPedInAnyVehicle(ped, false) then
                                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Store helicopter")
                                 else

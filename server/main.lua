@@ -2,7 +2,6 @@ local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local doctorCount = 0
 local QBCore = exports['qb-core']:GetCoreObject()
-local doctorCount = 0
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
@@ -37,6 +36,13 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	local num = 1
 	local bed = {}
 	local dist = 9999999
+	local players = QBCore.Functions.GetQBPlayers()
+	doctorCount = 0
+    for k, v in pairs(players) do
+		if v.PlayerData.job.name == "ambulance" then
+			doctorCount = doctorCount + 1
+		end
+	end
 	TriggerClientEvent('hospital:client:reachedHospital', src)
 	for k,v in pairs(Config.Locations["beds"]) do
 		local vec = vector3(v.coords.x, v.coords.y, v.coords.z)
