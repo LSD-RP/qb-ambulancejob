@@ -870,7 +870,8 @@ local listen = false
 end 
 
 RegisterNetEvent('qb-ambulancejob:checkin', function()
-    if doctorCount >= Config.MinimalDoctors then
+    -- if doctorCount >= Config.MinimalDoctors then
+    if false then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
     else
         TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
@@ -960,13 +961,15 @@ else
             checkingCombo:onPlayerInOut(function(isPointInside)
                 if isPointInside then
                     inCheckin = true
-                    if doctorCount >= Config.MinimalDoctors then
-                        exports['qb-core']:DrawText(Lang:t('text.call_doc'),'left')
-                        CheckInControls("checkin")
-                    else
-                        exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
-                        CheckInControls("checkin")
-                    end
+                    -- if doctorCount >= Config.MinimalDoctors then
+                    --     exports['qb-core']:DrawText(Lang:t('text.call_doc'),'left')
+                    --     CheckInControls("checkin")
+                    -- else
+                    --     exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
+                    --     CheckInControls("checkin")
+                    -- end
+                    exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
+                    CheckInControls("checkin")
                 else
                     inCheckin = false
                     listen = false
@@ -1007,19 +1010,21 @@ CreateThread(function()
             for k, checkins in pairs(Config.Locations["checking"]) do
                 if #(pos - checkins) < 1.5 then
                     sleep = 5
-                    if doctorCount >= Config.MinimalDoctors then
-                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Call doctor")
-                    else
-                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Check in")
-                    end
+                    -- if doctorCount >= Config.MinimalDoctors then
+                    --     DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Call doctor")
+                    -- else
+                    --     DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Check in")
+                    -- end
+                    DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Check in")
                    
                 elseif #(pos - checkins) < 4.5 then
                     sleep = 5
-                    if doctorCount >= Config.MinimalDoctors then
-                        DrawText3D(checkins.x, checkins.y, checkins.z, "Call")
-                    else
-                        DrawText3D(checkins.x, checkins.y, checkins.z, "Check in")
-                    end
+                    -- if doctorCount >= Config.MinimalDoctors then
+                    --     DrawText3D(checkins.x, checkins.y, checkins.z, "Call")
+                    -- else
+                    --     DrawText3D(checkins.x, checkins.y, checkins.z, "Check in")
+                    -- end
+                    DrawText3D(checkins.x, checkins.y, checkins.z, "Check in")
                 end
             end
 
