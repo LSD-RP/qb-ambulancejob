@@ -48,6 +48,65 @@ BodyParts = {
     ['RFOOT'] =         { label = Lang:t('body.right_foot'),    causeLimp = true, isDamaged = false, severity = 0 },
 }
 
+WeaponDamageList = {
+	["WEAPON_UNARMED"] = "Fist prints",
+	["WEAPON_ANIMAL"] = "Bite wound of an animal",
+	["WEAPON_COUGAR"] = "Bite wound of an animal",
+	["WEAPON_KNIFE"] = "Stab wound",
+	["WEAPON_NIGHTSTICK"] = "Bump from a stick or something similar",
+	["WEAPON_BREAD"] = "Dent in your head from a baguette!",
+	["WEAPON_HAMMER"] = "Bump from a stick or something similar",
+	["WEAPON_BAT"] = "Bump from a stick or something similar",
+	["WEAPON_GOLFCLUB"] = "Bump from a stick or something similar",
+	["WEAPON_CROWBAR"] = "Bump from a stick or something similar",
+	["WEAPON_PISTOL"] = "Pistol bullets in the body",
+	["WEAPON_COMBATPISTOL"] = "Pistol bullets in the body",
+	["WEAPON_APPISTOL"] = "Pistol bullets in the body",
+	["WEAPON_PISTOL50"] = "50 Cal Pistol bullets in the body",
+	["WEAPON_MICROSMG"] = "SMG bullets in the body",
+	["WEAPON_SMG"] = "SMG bullets in the body",
+	["WEAPON_ASSAULTSMG"] = "SMG bullets in the body",
+	["WEAPON_ASSAULTRIFLE"] = "Rifle bullets in the body",
+	["WEAPON_CARBINERIFLE"] = "Rifle bullets in the body",
+	["WEAPON_ADVANCEDRIFLE"] = "Rifle bullets in the body",
+	["WEAPON_MG"] = "Machine Gun bullets in the body",
+	["WEAPON_COMBATMG"] = "Machine Gun bullets in the body",
+	["WEAPON_PUMPSHOTGUN"] = "Shotgun bullets in the body",
+	["WEAPON_SAWNOFFSHOTGUN"] = "Shotgun bullets in the body",
+	["WEAPON_ASSAULTSHOTGUN"] = "Shotgun bullets in the body",
+	["WEAPON_BULLPUPSHOTGUN"] = "Shotgun bullets in the body",
+	["WEAPON_STUNGUN"] = "Taser prints",
+	["WEAPON_SNIPERRIFLE"] = "Sniper bullets in the body",
+	["WEAPON_HEAVYSNIPER"] = "Sniper bullets in the body",
+	["WEAPON_REMOTESNIPER"] = "Sniper bullets in the body",
+	["WEAPON_GRENADELAUNCHER"] = "Burns and fragments",
+	["WEAPON_GRENADELAUNCHER_SMOKE"] = "Smoke Damage",
+	["WEAPON_RPG"] = "Burns and fragments",
+	["WEAPON_STINGER"] = "Burns and fragments",
+	["WEAPON_MINIGUN"] = "Very much bullets in the body",
+	["WEAPON_GRENADE"] = "Burns and fragments",
+	["WEAPON_STICKYBOMB"] = "Burns and fragments",
+	["WEAPON_SMOKEGRENADE"] = "Smoke Damage",
+	["WEAPON_BZGAS"] = "Gas Damage",
+	["WEAPON_MOLOTOV"] = "Heavy Burns",
+	["WEAPON_FIREEXTINGUISHER"] = "Sprayed on :)",
+	["WEAPON_PETROLCAN"] = "Petrol Can Damage",
+	["WEAPON_FLARE"] = "Flare Damage",
+	["WEAPON_BARBED_WIRE"] = "Barbed Wire Damage",
+	["WEAPON_DROWNING"] = "Drowned",
+	["WEAPON_DROWNING_IN_VEHICLE"] = "Drowned",
+	["WEAPON_BLEEDING"] = "Lost a lot of blood",
+	["WEAPON_ELECTRIC_FENCE"] = "Electric Fence Wounds",
+	["WEAPON_EXPLOSION"] = "Many burns (from explosives)",
+	["WEAPON_FALL"] = "Broken bones",
+	["WEAPON_EXHAUSTION"] = "Died of Exhaustion",
+	["WEAPON_HIT_BY_WATER_CANNON"] = "Water Cannon Pelts",
+	["WEAPON_RAMMED_BY_CAR"] = "Car accident",
+	["WEAPON_RUN_OVER_BY_CAR"] = "Hit by a vehicle",
+	["WEAPON_HELI_CRASH"] = "Helicopter crash",
+	["WEAPON_FIRE"] = "Many burns",
+}
+
 -- Functions
 
 local function GetAvailableBed(bedId)
@@ -345,14 +404,16 @@ end
 
 local function CheckWeaponDamage(ped)
     local detected = false
-    for k, v in pairs(QBCore.Shared.Weapons) do
+    -- for k, v in pairs(QBCore.Shared.Weapons) do
+    for k, v in pairs(WeaponDamageList) do
         if HasPedBeenDamagedByWeapon(ped, k, 0) then
             detected = true
             if not IsInDamageList(k) then
                 TriggerEvent('chat:addMessage', {
                     color = { 255, 0, 0},
                     multiline = false,
-                    args = {Lang:t('info.status'), v.damagereason}
+                    -- args = {Lang:t('info.status'), v.damagereason}
+                    args = {"Status", v},
                 })
                 CurrentDamageList[#CurrentDamageList+1] = k
             end
