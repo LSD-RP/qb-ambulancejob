@@ -80,6 +80,24 @@ function SetLaststand(bool, spawn)
 
         InLaststand = true
 
+        local arenaCenter = vector3(2801.07, -3797.48, 132.83)
+        print(#(pos - arenaCenter))
+        if #(pos - arenaCenter) < 400 then
+            Wait(2000)
+            local respawnPoints = {
+                vector3(2764.38, -3684.52, 140.0),
+                vector3(2835.05, -3681.98, 139.95),
+                vector3(2834.81, -3917.63, 140.0),
+                vector3(2764.83, -3916.13, 140.0)
+            }
+            local point = respawnPoints[math.random(1,#respawnPoints)]
+            SetEntityCoords(PlayerPedId(), point.x, point.y, point.z, false, false, false, false)
+            Wait(5000)
+            TriggerEvent("hospital:client:Revive")
+            
+            return
+        end
+
         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
 
         CreateThread(function()

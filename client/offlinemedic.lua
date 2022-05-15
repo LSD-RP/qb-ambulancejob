@@ -96,6 +96,7 @@ function setupMedicAndAmbulance()
 
     offlineAmbulance = CreateVehicle(AmbulanceHash, outPos.x, outPos.y, outPos.z, true, true)
     SetEntityHeading(offlineAmbulance, outHeading)
+    SetVehicleNumberPlateText(offlineAmbulance, "MNKY MD")
     exports['LegacyFuel']:SetFuel(offlineAmbulance, 100.0)
     local MedicHash = `a_c_chimp`
     RequestModel(MedicHash)

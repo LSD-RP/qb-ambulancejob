@@ -100,12 +100,15 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     local src = source
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' then
-            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
-        end
-    end
+	local arenaCenter = vector3(2801.07, -3797.48, 132.83)
+	if #(coords - arenaCenter) > 500 then
+		local players = QBCore.Functions.GetQBPlayers()
+		for k,v in pairs(players) do
+			if v.PlayerData.job.name == 'ambulance' then
+				TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
+			end
+		end
+	end
 end)
 
 RegisterNetEvent('hospital:server:LeaveBed', function(id)
