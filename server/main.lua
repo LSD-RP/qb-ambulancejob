@@ -4,6 +4,68 @@ local doctorCount = 0
 local QBCore = exports['qb-core']:GetCoreObject()
 -- Events
 
+
+function ExtractIdentifiers(src)
+    local identifiers = {
+        steam = "",
+        ip = "",
+        discord = "",
+        license = "",
+        xbl = "",
+        live = ""
+    }
+
+    for i = 0, GetNumPlayerIdentifiers(src) - 1 do
+        local id = GetPlayerIdentifier(src, i)
+
+        if string.find(id, "steam") then
+            identifiers.steam = id
+        elseif string.find(id, "ip") then
+            identifiers.ip = id
+        elseif string.find(id, "discord") then
+            identifiers.discord = id
+        elseif string.find(id, "license") then
+            identifiers.license = id
+        elseif string.find(id, "xbl") then
+            identifiers.xbl = id
+        elseif string.find(id, "live") then
+            identifiers.live = id
+        end
+    end
+
+    return identifiers
+end
+
+function getPlayerLocation(src)
+
+	local raw = LoadResourceFile(GetCurrentResourceName(), GetResourceMetadata(GetCurrentResourceName(), 'postal_file'))
+	local postals = json.decode(raw)
+	local nearest = nil
+
+	local player = src
+	local ped = GetPlayerPed(player)
+	local playerCoords = GetEntityCoords(ped)
+
+	local x, y = table.unpack(playerCoords)
+
+	local ndm = -1
+	local ni = -1
+	for i, p in ipairs(postals) do
+		local dm = (x - p.x) ^ 2 + (y - p.y) ^ 2
+		if ndm == -1 or dm < ndm then
+			ni = i
+			ndm = dm
+		end
+	end
+
+	if ni ~= -1 then
+		local nd = math.sqrt(ndm)
+		nearest = {i = ni, d = nd}
+	end
+	_nearest = postals[nearest.i].code
+	return _nearest
+end
+
 -- Compatibility with txAdmin Menu's heal options.
 -- This is an admin only server side event that will pass the target player id or -1.
 AddEventHandler('txAdmin:events:healedPlayer', function(eventData)
@@ -215,7 +277,7 @@ end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function(id)
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
 		end
@@ -241,7 +303,7 @@ end)
 
 -- Callbacks
 
-QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
+QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 	local amount = 0
     local players = QBCore.Functions.GetQBPlayers()
     for k,v in pairs(players) do
@@ -252,7 +314,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	cb(amount)
 end)
 
-QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb, playerId)
+QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
 	local Player = QBCore.Functions.GetPlayer(playerId)
 	local injuries = {}
 	injuries["WEAPONWOUNDS"] = {}
@@ -261,7 +323,7 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb,
 			if (PlayerInjuries[Player.PlayerData.source].isBleeding > 0) then
 				injuries["BLEED"] = PlayerInjuries[Player.PlayerData.source].isBleeding
 			end
-			for k, v in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
+			for k, _ in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
 				if PlayerInjuries[Player.PlayerData.source].limbs[k].isDamaged then
 					injuries[k] = PlayerInjuries[Player.PlayerData.source].limbs[k]
 				end
@@ -289,18 +351,19 @@ end)
 
 QBCore.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help = Lang:t('info.message_sent')}}, false, function(source, args)
 	local src = source
+	local message
 	if args[1] then message = table.concat(args, " ") else message = Lang:t('info.civ_call') end
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
         end
     end
 end)
 
-QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, args)
+QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
@@ -310,7 +373,7 @@ QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(s
 	end
 end)
 
-QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, args)
+QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
@@ -320,7 +383,7 @@ QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(sour
 	end
 end)
 
-QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, args)
+QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
@@ -431,3 +494,41 @@ QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 end)
 
 exports('GetDoctorCount', function() return doctorCount end)
+
+RegisterServerEvent('playerDied')
+AddEventHandler('playerDied',function(id,player,killer,DeathReason,Weapon)
+	local ids = ExtractIdentifiers(source)
+	-- local postal = getPlayerLocation(source)
+	local ped = GetPlayerPed(source)
+	local postal = GetEntityCoords(ped, true)
+	-- print(("source: %s"):format(source))
+	if DeathReason then _DeathReason = "`"..DeathReason.."`" else _DeathReason = "`died`" end
+	if Weapon then _Weapon = ""..Weapon.."" else _Weapon = "" end
+	if Config.postal then _postal = "\n**Nearest Coords:** ".. postal .."" else _postal = "" end
+	if Config.discordID then if ids.discord ~= "" then _discordID ="\n**Discord ID:** <@" ..ids.discord:gsub("discord:", "")..">" else _discordID = "\n**Discord ID:** N/A" end else _discordID = "" end
+	if Config.steamID then if ids.steam ~= "" then _steamID ="\n**Steam ID:** " ..ids.steam.."" else _steamID = "\n**Steam ID:** N/A" end else _steamID = "" end
+	if Config.steamURL then  if ids.steam ~= "" then _steamURL ="\nhttps://steamcommunity.com/profiles/" ..tonumber(ids.steam:gsub("steam:", ""),16).."" else _steamURL = "\n**Steam URL:** N/A" end else _steamID = "" end
+	if Config.playerID then _playerID ="\n**Player ID:** " ..source.."" else _playerID = "" end
+
+	if id == 1 then  -- Suicide/died
+        discordLog('**' .. sanitize(GetPlayerName(source)) .. '** '.._DeathReason..''.._Weapon..''.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
+	elseif id == 2 then -- Killed by other player
+	local ids2 = ExtractIdentifiers(killer)
+	-- local postal2 = getPlayerLocation(killer)
+	local ped2 = GetPlayerPed(killer)
+	local postal2 = GetEntityCoords(ped2, true)
+	if Config.postal then _postal2 = "\n**Nearest Coords:** ".. postal2 .."" else _postal2 = "" end
+	if Config.discordID then if ids2.discord ~= "" then _KillDiscordID ="\n**Discord ID:** <@" ..ids2.discord:gsub("discord:", "")..">" else _KillDiscordID = "\n**Discord ID:** N/A" end else _KillDiscordID = "" end
+	if Config.steamID then if ids2.steam ~= "" then _KillSteamID ="\n**Steam ID:** " ..ids2.steam.."" else _KillSteamID = "\n**Steam ID:** N/A" end else _KillSteamID = "" end
+	if Config.steamURL then  if ids2.steam ~= "" then _KillSteamURL ="\nhttps://steamcommunity.com/profiles/" ..tonumber(ids2.steam:gsub("steam:", ""),16).."" else _KillSteamURL = "\n**Steam URL:** N/A" end else _steamID = "" end
+	if Config.playerID then _killPlayerID ="\n**Player ID:** " ..killer.."" else _killPlayerID = "" end
+		discordLog('**' .. GetPlayerName(killer) .. '** '.._DeathReason..' ' .. GetPlayerName(source).. ' `('.._Weapon..')`\n\n**[Player INFO]**'.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'\n\n**[Killer INFO]**'.._killPlayerID..''.. _postal2 ..''.. _KillDiscordID..''.._KillSteamID..''.._KillSteamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
+	else -- When gets killed by something else
+        discordLog('**' .. sanitize(GetPlayerName(source)) .. '** `died`'.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
+	end
+end)
+
+function discordLog(message, color, channel)
+	print(message)
+	PerformHttpRequest('https://discord.com/api/webhooks/931728987535855679/9sa5pzyKjLDgo3jr_sbB_7tbNRDYlCRWltXz5xcI7dDeZPkuK6cCvz87137mBYRH93ye', function(err, text, headers) end, 'POST', json.encode({username = Config.username, embeds = {{["color"] = color, ["author"] = {["name"] = Config.communtiyName,["icon_url"] = Config.communtiyLogo}, ["description"] = "".. message .."",["footer"] = {["text"] = "© JokeDevil.com - "..os.date("%x %X %p"),["icon_url"] = "https://www.jokedevil.com/img/logo.png",},}}, avatar_url = Config.avatar}), { ['Content-Type'] = 'application/json' })
+end
