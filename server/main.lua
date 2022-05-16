@@ -66,6 +66,10 @@ function getPlayerLocation(src)
 	return _nearest
 end
 
+function sanitize(string)
+    return string:gsub('%@', '')
+end
+
 -- Compatibility with txAdmin Menu's heal options.
 -- This is an admin only server side event that will pass the target player id or -1.
 AddEventHandler('txAdmin:events:healedPlayer', function(eventData)
