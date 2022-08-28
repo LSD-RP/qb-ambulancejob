@@ -42,17 +42,11 @@ function SetLaststand(bool)
     local ped = PlayerPedId()
     if bool then
         Wait(1000)
+        while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
         local pos = GetEntityCoords(ped)
         local heading = GetEntityHeading(ped)
-
-        while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do
-            Wait(10)
-        end
-
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
-
         LaststandTime = Laststand.ReviveInterval
-
         if IsPedInAnyVehicle(ped) then
             local veh = GetVehiclePedIsIn(ped)
             local vehseats = GetVehicleModelNumberOfSeats(GetHashKey(GetEntityModel(veh)))
@@ -66,9 +60,7 @@ function SetLaststand(bool)
         else
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
         end
-		
         SetEntityHealth(ped, 150)
-
         if IsPedInAnyVehicle(ped, false) then
             LoadAnimation("veh@low@front_ps@idle_duck")
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
@@ -76,9 +68,7 @@ function SetLaststand(bool)
             LoadAnimation(lastStandDict)
             TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
         end
-
         InLaststand = true
-
         local arenaCenter = vector3(2801.07, -3797.48, 132.83)
         print(#(pos - arenaCenter))
         if #(pos - arenaCenter) < 400 then

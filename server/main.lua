@@ -140,12 +140,19 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
 				TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 			end
-			Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-			TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
-			return
 		end
-	end
+
+		TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["jailbeds"][1], true)
+		TriggerClientEvent('hospital:client:SetBed', -1, 1, true)
+		if Config.WipeInventoryOnRespawn then
+			Player.Functions.ClearInventory()
+			MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
+			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
+		end
+		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
+			exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+    end
 	--print("All beds were full, placing in first bed as fallback")
 
 	TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["beds"][1], true)
@@ -240,15 +247,28 @@ end)
 
 RegisterNetEvent('hospital:server:AddDoctor', function(job)
 	if job == 'ambulance' then
+		local src = source
 		doctorCount = doctorCount + 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = true
 	end
 end)
 
 RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
 	if job == 'ambulance' then
+		local src = source
 		doctorCount = doctorCount - 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = nil
+	end
+end)
+
+AddEventHandler("playerDropped", function()
+	local src = source
+	if Doctors[src] then
+		doctorCount = doctorCount - 1
+		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = nil
 	end
 end)
 
@@ -303,6 +323,41 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 	else
 		TriggerClientEvent('QBCore:Notify', helperId, Lang:t('error.cant_help'), "error")
 	end
+end)
+
+RegisterNetEvent('hospital:server:removeBandage', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('bandage', 1)
+end)
+
+RegisterNetEvent('hospital:server:removeIfaks', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('ifaks', 1)
+end)
+
+RegisterNetEvent('hospital:server:removePainkillers', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('painkillers', 1)
+end)
+
+RegisterNetEvent('hospital:server:resetHungerThirst', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.SetMetaData('hunger', 100)
+	Player.Functions.SetMetaData('thirst', 100)
+
+	TriggerClientEvent('hud:client:UpdateNeeds', source, 100, 100)
 end)
 
 -- Callbacks

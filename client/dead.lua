@@ -175,7 +175,7 @@ function OnDeath()
             else
                 NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
             end
-			
+
             SetEntityInvincible(player, true)
             SetEntityHealth(player, GetEntityMaxHealth(player))
             if IsPedInAnyVehicle(player, false) then
@@ -478,9 +478,11 @@ CreateThread(function()
                 OnDeath()
                 DeathTimer()
             end
-		end
-	end
+        end
+    end
 end)
+
+-- Threads
 
 emsNotified = false
 

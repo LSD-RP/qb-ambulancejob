@@ -1,6 +1,7 @@
 Config = {}
 Config.UseTarget = false -- Use qb-target interactions (don't change this, go to your server.cfg and add setr UseTarget true)
 Config.MinimalDoctors = 2 -- How many players with the ambulance job to prevent the hospital check-in system from being used
+Config.DocCooldown = 1 -- Cooldown between doctor calls allowed, in minutes
 Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the players items when they respawn at the hospital
 Config.Helicopter = "polmav" -- Helicopter model that players with the ambulance job can use
 Config.BillCost = 750 -- Price that players are charged for using the hospital check-in system
@@ -28,6 +29,7 @@ Config.LegInjuryChance = { -- The chance, in percent, that leg injury side-effec
     Walking = 15
 }
 Config.MajorArmoredBleedChance = 45 -- The chance, in percent, that a player will get a bleed effect when taking heavy damage while wearing armor
+Config.MaxInjuryChanceMulti = 3 -- How many times the HealthDamage value above can divide into damage taken before damage is forced to be applied
 Config.DamageMinorToMajor = 35 -- How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
 Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
 
@@ -109,6 +111,12 @@ Config.Locations = {
         [18] = {coords = vector4(1825.76, 3678.47, 35.18, 301.02), taken = false, model = 2117668672},
         -- inside pd
         [19] = {coords = vector4(438.34, -976.44, 27.58, 182.02), taken = false, model = 2117668672},
+    },
+    ["jailbeds"] = {
+        [1] = {coords = vector4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672},
+        [2] = {coords = vector4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672},
+        [3] = {coords = vector4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672},
+        [4] = {coords = vector4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672},
     },
     ["stations"] = {
         [1] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)},
@@ -676,3 +684,4 @@ Config.shootingColor = "10373"		-- Shooting a weapon
 Config.deathColor = "000000"		-- Player Died
 Config.serverstatus = "00ff33"	-- server Stopped/Started
 Config.resourceColor = "15461951"	-- Resource Stopped/Started
+
