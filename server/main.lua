@@ -468,7 +468,7 @@ end)
 QBCore.Functions.CreateUseableItem("ifaks", function(source, item)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.RemoveItem("ifaks", 1) then
 		TriggerClientEvent("hospital:client:UseIfaks", src)
 	end
 end)
@@ -476,7 +476,7 @@ end)
 QBCore.Functions.CreateUseableItem("bandage", function(source, item)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.RemoveItem("bandage", 1) then
 		TriggerClientEvent("hospital:client:UseBandage", src)
 	end
 end)
@@ -484,7 +484,7 @@ end)
 QBCore.Functions.CreateUseableItem("painkillers", function(source, item)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.RemoveItem("painkillers", 1) then
 		TriggerClientEvent("hospital:client:UsePainkillers", src)
 	end
 end)
@@ -517,15 +517,15 @@ AddEventHandler('playerDied',function(id,player,killer,DeathReason,Weapon)
 	if id == 1 then  -- Suicide/died
         discordLog('**' .. sanitize(GetPlayerName(source)) .. '** '.._DeathReason..''.._Weapon..''.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
 	elseif id == 2 then -- Killed by other player
-	local ids2 = ExtractIdentifiers(killer)
-	-- local postal2 = getPlayerLocation(killer)
-	local ped2 = GetPlayerPed(killer)
-	local postal2 = GetEntityCoords(ped2, true)
-	if Config.postal then _postal2 = "\n**Nearest Coords:** ".. postal2 .."" else _postal2 = "" end
-	if Config.discordID then if ids2.discord ~= "" then _KillDiscordID ="\n**Discord ID:** <@" ..ids2.discord:gsub("discord:", "")..">" else _KillDiscordID = "\n**Discord ID:** N/A" end else _KillDiscordID = "" end
-	if Config.steamID then if ids2.steam ~= "" then _KillSteamID ="\n**Steam ID:** " ..ids2.steam.."" else _KillSteamID = "\n**Steam ID:** N/A" end else _KillSteamID = "" end
-	if Config.steamURL then  if ids2.steam ~= "" then _KillSteamURL ="\nhttps://steamcommunity.com/profiles/" ..tonumber(ids2.steam:gsub("steam:", ""),16).."" else _KillSteamURL = "\n**Steam URL:** N/A" end else _steamID = "" end
-	if Config.playerID then _killPlayerID ="\n**Player ID:** " ..killer.."" else _killPlayerID = "" end
+		local ids2 = ExtractIdentifiers(killer)
+		-- local postal2 = getPlayerLocation(killer)
+		local ped2 = GetPlayerPed(killer)
+		local postal2 = GetEntityCoords(ped2, true)
+		if Config.postal then _postal2 = "\n**Nearest Coords:** ".. postal2 .."" else _postal2 = "" end
+		if Config.discordID then if ids2.discord ~= "" then _KillDiscordID ="\n**Discord ID:** <@" ..ids2.discord:gsub("discord:", "")..">" else _KillDiscordID = "\n**Discord ID:** N/A" end else _KillDiscordID = "" end
+		if Config.steamID then if ids2.steam ~= "" then _KillSteamID ="\n**Steam ID:** " ..ids2.steam.."" else _KillSteamID = "\n**Steam ID:** N/A" end else _KillSteamID = "" end
+		if Config.steamURL then  if ids2.steam ~= "" then _KillSteamURL ="\nhttps://steamcommunity.com/profiles/" ..tonumber(ids2.steam:gsub("steam:", ""),16).."" else _KillSteamURL = "\n**Steam URL:** N/A" end else _steamID = "" end
+		if Config.playerID then _killPlayerID ="\n**Player ID:** " ..killer.."" else _killPlayerID = "" end
 		discordLog('**' .. GetPlayerName(killer) .. '** '.._DeathReason..' ' .. GetPlayerName(source).. ' `('.._Weapon..')`\n\n**[Player INFO]**'.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'\n\n**[Killer INFO]**'.._killPlayerID..''.. _postal2 ..''.. _KillDiscordID..''.._KillSteamID..''.._KillSteamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
 	else -- When gets killed by something else
         discordLog('**' .. sanitize(GetPlayerName(source)) .. '** `died`'.._playerID..''.. _postal ..''.. _discordID..''.._steamID..''.._steamURL..'', Config.deathColor, 'deaths') -- sending to deaths channel
@@ -533,6 +533,6 @@ AddEventHandler('playerDied',function(id,player,killer,DeathReason,Weapon)
 end)
 
 function discordLog(message, color, channel)
-	print(message)
+	-- print(message)
 	PerformHttpRequest('https://discord.com/api/webhooks/931728987535855679/9sa5pzyKjLDgo3jr_sbB_7tbNRDYlCRWltXz5xcI7dDeZPkuK6cCvz87137mBYRH93ye', function(err, text, headers) end, 'POST', json.encode({username = Config.username, embeds = {{["color"] = color, ["author"] = {["name"] = Config.communtiyName,["icon_url"] = Config.communtiyLogo}, ["description"] = "".. message .."",["footer"] = {["text"] = "© JokeDevil.com - "..os.date("%x %X %p"),["icon_url"] = "https://www.jokedevil.com/img/logo.png",},}}, avatar_url = Config.avatar}), { ['Content-Type'] = 'application/json' })
 end

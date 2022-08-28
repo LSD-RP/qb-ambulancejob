@@ -810,7 +810,9 @@ CreateThread(function()
         local sleep = 1000
         if isInHospitalBed and canLeaveBed then
             sleep = 0
+            local pos = GetEntityCoords(PlayerPedId())
             exports['qb-core']:DrawText(Lang:t('text.bed_out'))
+            DrawText3D(pos.x, pos.y, pos.z, Lang:t('text.bed_out'))
             if IsControlJustReleased(0, 38) then
                 exports['qb-core']:KeyPressed(38)
                 LeaveBed()
